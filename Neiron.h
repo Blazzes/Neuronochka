@@ -1,7 +1,8 @@
 #pragma once
-#include "Connection.h"
+
 #include <vector>
 #include <math.h>
+class Connection;
 class Neiron
 {
 public:

@@ -1,5 +1,5 @@
 #pragma once
-#include "Neiron.h"
+class Neiron;
 class Connection
 {
 public:

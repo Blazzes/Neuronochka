@@ -1,5 +1,5 @@
 #include "Connection.h"
-
+#include "Neiron.h"
 Connection::Connection(Neiron* sourse, double weight): m_sourse(sourse), m_weight(weight)
 {
 }

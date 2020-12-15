@@ -1,5 +1,5 @@
 #include "Neiron.h"
-
+#include "Connection.h"
 Neiron::Neiron(std::vector<Neiron*>* inputs)
 {
 	if (!inputs) return;
