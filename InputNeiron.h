@@ -6,7 +6,7 @@ class InputNeiron :
 public:
     InputNeiron(std::vector<Neiron*>* inputs);
     void SetResult(double input);
-    virtual void Calc_Result() override = 0;
+    virtual void Calc_Result() override {}
 private:
 };
 
