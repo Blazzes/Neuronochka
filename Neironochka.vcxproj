@@ -139,7 +139,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ClassNeiron.cpp" />
+    <ClCompile Include="InputNeiron.cpp" />
+    <ClCompile Include="Neiron.cpp" />
+    <ClCompile Include="NeironNetwork.cpp" />
+    <ClCompile Include="OutputNeiron.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="VectorWeight.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ClassNeiron.h" />
+    <ClInclude Include="InputNeiron.h" />
+    <ClInclude Include="Neiron.h" />
+    <ClInclude Include="NeironNetwork.h" />
+    <ClInclude Include="OutputNeiron.h" />
+    <ClInclude Include="VectorWeight.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
