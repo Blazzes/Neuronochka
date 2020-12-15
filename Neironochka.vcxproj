@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ClassNeiron.cpp" />
+    <ClCompile Include="Connection.cpp" />
     <ClCompile Include="InputNeiron.cpp" />
     <ClCompile Include="Neiron.cpp" />
     <ClCompile Include="NeironNetwork.cpp" />
@@ -149,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClassNeiron.h" />
+    <ClInclude Include="Connection.h" />
     <ClInclude Include="InputNeiron.h" />
     <ClInclude Include="Neiron.h" />
     <ClInclude Include="NeironNetwork.h" />

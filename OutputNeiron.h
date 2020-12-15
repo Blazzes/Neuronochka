@@ -3,5 +3,8 @@
 class OutputNeiron :
     public Neiron
 {
+public:
+    OutputNeiron(std::vector<Neiron*>* inputs);
+private:
 };
 
