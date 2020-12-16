@@ -1,10 +1,39 @@
 #include <iostream>
+#include <SDL.h>
 #include "Neiron.h"
 #include "ClassNeiron.h"
 #include "InputNeiron.h"
 #include "OutputNeiron.h"
-int main()
+
+SDL_Window* win;
+SDL_Renderer* ren;
+SDL_Surface* src;
+
+SDL_Event e;
+
+void init()
 {
+	SDL_Init(SDL_INIT_EVERYTHING);
+	win = SDL_CreateWindow("Neiron", 100, 100, 640, 480, SDL_WINDOW_HIDDEN);
+	ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_PRESENTVSYNC);
+	src = SDL_GetWindowSurface(win);
+}
+
+void quit()
+{
+	SDL_DestroyRenderer(ren);
+	SDL_DestroyWindow(win);
+	SDL_Quit();
+}
+
+void draw()
+{
+
+}
+
+int main(int argc, char* argv)
+{
+	init();
 	std::vector<Neiron*> Input;
 	std::vector<Neiron*> Sl1;
 	std::vector<Neiron*> Sl2;
@@ -29,6 +58,15 @@ int main()
 
 	while (1)
 	{
+
+		while (SDL_PollEvent(&e) != 0)
+		{
+			if (e.type == SDL_QUIT)
+			{
+				return 0;
+			}
+		}
+
 		std::cout << "\n-----------Input------------" << std::endl;
 		for (Neiron* i : Input)
 		{
@@ -53,9 +91,11 @@ int main()
 			i->Calc_Result();
 			std::cout << i->GetResult() << "  ";
 		}
+
+		draw();
 		system("pause");
 		system("cls");
 	}
-
+	quit();
 	return 0;
 }
