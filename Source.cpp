@@ -14,7 +14,7 @@ SDL_Event e;
 void init()
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	win = SDL_CreateWindow("Neiron", 100, 100, 640, 480, SDL_WINDOW_HIDDEN);
+	win = SDL_CreateWindow("Neiron", 100, 100, 640, 480, SDL_WINDOW_OPENGL);
 	ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_PRESENTVSYNC);
 	src = SDL_GetWindowSurface(win);
 }
@@ -31,7 +31,7 @@ void draw()
 
 }
 
-int main(int argc, char* argv)
+int main(int argv, char* argc[])
 {
 	init();
 	std::vector<Neiron*> Input;
