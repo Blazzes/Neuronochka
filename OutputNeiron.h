@@ -5,6 +5,8 @@ class OutputNeiron :
 {
 public:
     OutputNeiron(std::vector<Neiron*>* inputs);
+    void CompError(double comp) override;
+    void CompResult(double comp);
 private:
 };
 
