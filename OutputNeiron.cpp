@@ -10,3 +10,4 @@ void OutputNeiron::CompError(double comp)
 	//std::cout << m_error << "---" << comp << "---" << m_result;
 	CompPreError();
 }
+

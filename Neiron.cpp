@@ -41,13 +41,14 @@ void Neiron::CorectWeight()
 {
 	for (auto i : m_inConnections)
 	{
-		i->SetWeight(i->GetWeight()+m_k*m_error*i->GetSourse()->GetResult()*funcActivate(m_result)*(1.0-funcActivate(m_result)));
+		i->SetWeight(i->GetWeight()+m_k*m_error*i->GetSourse()->GetResult()*funcActProiz(m_result));
+		//if (i->GetWeight() > 1) std::cout << i->GetWeight();
 	}
 }
 
 double Neiron::GetWeight() const
 {
-	return 0.0;
+	return m_inConnections[0]->GetWeight();
 }
 
 double Neiron::GetError() const
@@ -57,5 +58,32 @@ double Neiron::GetError() const
 
 double Neiron::funcActivate(double input)
 {
-	return 1.0/(1.0+exp(-input));
+	if (input > 1)
+	{
+		return 1 + 0.01 * (input - 1);
+	}
+	if (input >= 0 && input <= 1)
+	{
+		return input;
+	}
+	if (input < 0)
+	{
+		return input*0.01;
+	}
+}
+
+double Neiron::funcActProiz(double input)
+{
+	if (input < 0)
+	{
+		return 0.01;
+	}
+	if (input >= 0 && input <= 1)
+	{
+		return 1;
+	}
+	if (input > 1)
+	{
+		return 0.01;
+	}
 }

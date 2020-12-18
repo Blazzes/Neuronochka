@@ -1,5 +1,5 @@
 #include "NeironNetwork.h"
-
+#include <iostream>
 NeironNetwork::NeironNetwork(std::vector<uint16_t> countNe)
 {
 	for (int i = 0; i < countNe.size(); ++i)
@@ -23,10 +23,10 @@ NeironNetwork::NeironNetwork(std::vector<uint16_t> countNe)
 	
 }
 
-void NeironNetwork::NetUpdate(std::vector<double> input, std::vector<double> output)
+void NeironNetwork::NetUpdate(std::vector<double> input, std::vector<double> output, std::vector<double>* NetOut)
 {
 	NextUpdate(input);
-	ErrorUpdate(output);
+	ErrorUpdate(output, NetOut);
 	WeightUpdate();
 }
 
@@ -34,6 +34,7 @@ void NeironNetwork::NextUpdate(std::vector<double> input)
 {
 	for (int i = 0; i < net.size(); i++)
 	{
+		std::cout << "laier" << i << std::endl;
 		for (int j = 0; j < net.at(i)->size(); j++)
 		{
 			if (i == 0)
@@ -42,11 +43,14 @@ void NeironNetwork::NextUpdate(std::vector<double> input)
 				continue;
 			}
 			net.at(i)->at(j)->Calc_Result();
+			std::cout.precision(5);
+			std::cout << net.at(i)->at(j)->GetResult() << ":" << net.at(i)->at(j)->GetWeight() << "\t";
 		}
+		std::cout << "\n\n";
 	}
 }
 
-void NeironNetwork::ErrorUpdate(std::vector<double> output)
+void NeironNetwork::ErrorUpdate(std::vector<double> output, std::vector<double>* NetOut)
 {
 	for (int i = net.size() - 1; i > 0; i--)
 	{
@@ -54,11 +58,13 @@ void NeironNetwork::ErrorUpdate(std::vector<double> output)
 		{
 			if (i == net.size() - 1)
 			{
+				NetOut->push_back(net.at(i)->at(j)->GetResult());
 				net.at(i)->at(j)->CompError(output[j]);
 				continue;
 			}
 			net.at(i)->at(j)->CompPreError();
 		}
+		
 	}
 }
 
