@@ -5,6 +5,7 @@ class ClassNeiron :
 {
 public:
     ClassNeiron(std::vector<Neiron*>* inputs);
+    ClassNeiron(Neiron** inputs, size_t size);
 private:
 };
 

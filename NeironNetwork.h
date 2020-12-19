@@ -11,6 +11,8 @@ private:
     void NextUpdate(std::vector<double> input);
     void ErrorUpdate(std::vector<double> output, std::vector<double>* NetOut);
     void WeightUpdate();
-    std::vector<std::vector<Neiron*>*> net;
+    //std::vector<std::vector<Neiron*>> net;
+    Neiron*** net3;
+    std::vector<uint16_t> size_slize;
 };
 

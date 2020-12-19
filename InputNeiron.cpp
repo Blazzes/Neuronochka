@@ -1,6 +1,6 @@
 #include "InputNeiron.h"
 
-InputNeiron::InputNeiron(std::vector<Neiron*>* inputs): Neiron(nullptr)
+InputNeiron::InputNeiron(std::vector<Neiron*>* inputs): Neiron(inputs)
 {
 }
 

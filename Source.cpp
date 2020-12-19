@@ -19,7 +19,7 @@ std::vector<std::vector<uint8_t>> dataIn;
 void init()
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	win = SDL_CreateWindow("Neiron", 100, 100, 640, 480, SDL_WINDOW_OPENGL);
+	win = SDL_CreateWindow("Neiron", 100, 100, 800, 800, SDL_WINDOW_OPENGL);
 	ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_PRESENTVSYNC);
     src = SDL_GetWindowSurface(win);
 	//src = SDL_CreateRGBSurface(0,)
@@ -96,9 +96,9 @@ void loadIMG(IMG* img, char* path) {
         for (size_t w = 0; w < img->W; w++) {
             char color[4];
             inFile.seekg(pos);
-            inFile.read(color, 4);
+            inFile.read(color, img->bits/8);
             img->pixel.push_back({ w, h, color[2], color[1], color[0] });
-            pos += 4;
+            pos += img->bits/8;
         }
         printf("\nrow: %i pos %08X", h, pos);
         pos += padding;
@@ -109,13 +109,36 @@ int main(int argv, char* argc[])
 {
 	init();
     IMG img;
-	NeironNetwork net({96,100,100,50,25});
-    loadIMG(&img, (char*)("12345.bmp"));
+	NeironNetwork net({276,300,300,400});
+    loadIMG(&img, (char*)("home.bmp"));
     bool run = true;
     SDL_Rect r;
-    int delay = 1;
+    int delay = 0;
     std::cout << "\n";
-    while (run)
+
+    int a1[20];
+    int* a2 = new int[20];
+    *a2 = 1;
+    std::cout << sizeof(a1) / sizeof(*a1) << std::endl;
+    std::cout << sizeof(a2) << " " << sizeof(*a2);
+    
+    int counter = 1;
+    /*while (1)
+    {
+        std::vector<double> inputData;
+        for (int i = 0; i < 296; i++)
+        {
+            inputData.push_back(img.pixel[i].R / 255.0);
+        }
+        std::vector<double> outData = { 0.8, 0.2 };
+        std::vector<double> out;
+        net.NetUpdate(inputData, outData, &out);
+        std::cout << out[0] << "\t" << out[1] << std::endl;
+        SDL_Delay(1);
+        system("cls");
+    }*/
+    int Px = 0, Py = 0;
+   while (run)
     {
         while (SDL_PollEvent(&e) != 0)
         {
@@ -128,81 +151,91 @@ int main(int argv, char* argc[])
                 if (e.key.keysym.sym == SDLK_UP)
                 {
                     delay -= 10;
-                    if (delay < 1) delay = 1;
+                    if (delay < 0) delay = 0;
                 }
                 if (e.key.keysym.sym == SDLK_DOWN)
                 {
                     delay += 10;
-                    if (delay > 1000) delay = 100;
+                    if (delay > 1000) delay = 1000;
                 }
-            }
-        }
-
-        int rand_w = rand() % (img.W - 12) + 1, rand_h = rand() % (img.H - 12) + 1;
-
-        r.x = 1;
-        r.y = 1;
-        r.w = r.h = 300;
-        SDL_FillRect(src, &r, SDL_MapRGB(src->format, 255,0,0));
-
-        //int rand_w = 10, rand_h = 10;
-
-        std::vector<double> input;
-        std::vector<double> output;
-        std::vector<double> NetOut;
-        int counter = 0;
-        for (int y = rand_h; y < 11+rand_h; y++)
-        {
-            for (int x = rand_w; x < 11 + rand_w; x++)
-            {
-                if (x > 2 + rand_w && x < 8 + rand_w && y > 2 + rand_h && y < 8 + rand_h)
+                if (e.key.keysym.sym == SDLK_SPACE)
                 {
-                    output.push_back(img.pixel[y * img.W + x].R / 255.0);
+                    system("pause");
                 }
-                else {
-                    input.push_back(img.pixel[y * img.W + x].R / 255.0);
-                    counter++;
-                }
-                r.x = (x % rand_w) * 10 + 100;
-                r.y = (y % rand_h) * 10 + 100;
-                r.w = r.h = 10;
-                SDL_FillRect(src, &r, SDL_MapRGB(src->format, img.pixel[y * img.W + x].R,
-                    img.pixel[y * img.W + x].G, img.pixel[y * img.W + x].B));
             }
         }
+
+        //int rand_w = rand() % (img.W - 12) + 1, rand_h = rand() % (img.H - 12) + 1;
+
+        //r.x = 1;
+        //r.y = 1;
+        //r.w = r.h = 500;
+        //SDL_FillRect(src, &r, SDL_MapRGB(src->format, 255,0,0));
+
+        if (++Px > img.W - 26) {
+            Px = 0;
+            if (++Py > img.H - 26)
+            {
+                Py = 0;
+            }
+        }
+        int rand_w = Px, rand_h = Py;
+
+        std::vector<double> inputR;
+        std::vector<double> outputR;
+        std::vector<double> NetOutR;
+
+        std::vector<double> inputG;
+        std::vector<double> outputG;
+        std::vector<double> NetOutG;
+
+        std::vector<double> inputB;
+        std::vector<double> outputB;
+        std::vector<double> NetOutB;
         
-        net.NetUpdate(input, output, &NetOut);
-
-        for (int y = 0; y < 5; y++)
+        for (int y = 0; y < 26; y++)
         {
-            for (int x = 0; x < 5; x++)
+            for (int x = 0; x < 26; x++)
             {
-                r.x = x * 10 + 253;
-                r.y = y * 10 + 103;
-                r.w = r.h = 10;
-                SDL_FillRect(src, &r, SDL_MapRGB(src->format, NetOut[y * 5 + x] * 255, NetOut[y * 5 + x] * 255, NetOut[y * 5 + x] * 255));
-            }
-        }
-
-        /*for (int y = 0; y < 12; y++)
-        {
-            for (int x = 0; x < 12; x++)
-            {
-                if (x > 3 && x < 9 && y > 3 && y < 9)
+                int xx = x+rand_w, yy = y+rand_h;
+                if (y > 2 && y < 23 && x > 2 && x < 23)
                 {
-                    continue;
+                    outputR.push_back(img.pixel[yy * img.W + xx].R / 255.0);
+                    outputG.push_back(img.pixel[yy * img.W + xx].G / 255.0);
+                    outputB.push_back(img.pixel[yy * img.W + xx].B / 255.0);
                 }
                 else {
-                    r.x = x * 10 + 253;
-                    r.y = y * 10 + 103;
-                    r.w = r.h = 10;
-                    SDL_FillRect(src, &r, SDL_MapRGB(src->format, input[y * 11 + x] * 255, input[y * 11 + x] * 255, input[y * 11 + x] * 255));
+                    inputR.push_back(img.pixel[yy * img.W + xx].R / 255.0);
+                    inputG.push_back(img.pixel[yy * img.W + xx].G / 255.0);
+                    inputB.push_back(img.pixel[yy * img.W + xx].B / 255.0);
                 }
+                r.x = x * 10 + 1;
+                r.y = y * 10 + 1;
+                r.w = r.h = 10;
+                SDL_FillRect(src, &r, SDL_MapRGB(src->format, img.pixel[yy * img.W + xx].R, img.pixel[yy * img.W + xx].G, img.pixel[yy * img.W + xx].B));
+                r.x = x * 10 + 301;
+                r.y = y * 10 + 1;
+                SDL_FillRect(src, &r, SDL_MapRGB(src->format, img.pixel[yy * img.W + xx].R, img.pixel[yy * img.W + xx].G, img.pixel[yy * img.W + xx].B));
             }
-        }*/
-        std::cout << counter << "\n\n";
+        }
+        net.NetUpdate(inputR, outputR, &NetOutR);
+        net.NetUpdate(inputG, outputG, &NetOutG);
+        net.NetUpdate(inputB, outputB, &NetOutB);
+
+
+        for (int y = 0; y < 20; y++)
+        {
+            for (int x = 0; x < 20; x++)
+            {
+                r.x = x * 10 + 331;
+                r.y = y * 10 + 31;
+                r.w = r.h = 10;
+                SDL_FillRect(src, &r, SDL_MapRGB(src->format, NetOutR[y * 20 + x], NetOutG[y * 20 + x], NetOutB[y * 20 + x]));
+            }
+        }
         SDL_UpdateWindowSurface(win);
         SDL_Delay(delay);
+        counter++;
     }
 	quit();
 	return 0;
