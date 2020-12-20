@@ -57,7 +57,7 @@ void Neiron::CorectWeight()
 	if (!m_inCon) return;
 	for (int i = 0; i < size_con; i++) // идемм по всем связям
 	{
-		m_inCon[i]->SetWeight(m_inCon[i]->GetWeight()+m_k*m_error* m_inCon[i]->GetSourse()->GetResult()*(1 - pow(m_result,2)));
+		m_inCon[i]->SetWeight(m_inCon[i]->GetWeight()+m_k*m_error* m_inCon[i]->GetSourse()->GetResult()*m_result*(1-m_result));
 		/*
 			устанавливаем вес связи = связь + коэф обуч * ош нейрона выход * нейрона пред слоя * производную вункции активации
 		*/
@@ -72,8 +72,8 @@ double Neiron::GetError() const
 
 double Neiron::funcActivate(double input)
 {
-	return (exp(input) - exp(-input)) / (exp(input) + exp(-input));
-	//return 1.0 / (1.0 + exp(-input));
+	//return (exp(input) - exp(-input)) / (exp(input) + exp(-input));
+	return 1.0 / (1.0 + exp(-input));
 	/*if (input > 1)
 	{
 		return 1 + 0.01 * (input - 1);

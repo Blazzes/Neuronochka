@@ -63,7 +63,7 @@ void NeironNetwork::NextUpdate(std::vector<double> input)
 				continue; // сл итерация
 			}
 			net3[i][j]->Calc_Result(); // считаем выход нейрона 
-			//std::cout.precision(30); // настройка вывода
+			//std::cout.precision(5); // настройка вывода
 			//std::cout << net3[i][j]->GetResult() << "\t"; // выводим значение нейрона и его вес
 		}
 		//std::cout << "\n\n";

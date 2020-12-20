@@ -110,6 +110,8 @@ int main(int argv, char* argc[])
 	init();
     IMG img;
 	NeironNetwork net({276,300,300,400});
+    NeironNetwork net2({ 276,300,300,400 });
+    NeironNetwork net3({ 276,300,300,400 });
     loadIMG(&img, (char*)("home.bmp"));
     bool run = true;
     SDL_Rect r;
@@ -179,7 +181,7 @@ int main(int argv, char* argc[])
                 Py = 0;
             }
         }
-        int rand_w = Px, rand_h = Py;
+        int rand_w = 60, rand_h = 200;
 
         std::vector<double> inputR;
         std::vector<double> outputR;
@@ -219,8 +221,8 @@ int main(int argv, char* argc[])
             }
         }
         net.NetUpdate(inputR, outputR, &NetOutR);
-        net.NetUpdate(inputG, outputG, &NetOutG);
-        net.NetUpdate(inputB, outputB, &NetOutB);
+        net2.NetUpdate(inputG, outputG, &NetOutG);
+        net3.NetUpdate(inputB, outputB, &NetOutB);
 
 
         for (int y = 0; y < 20; y++)
@@ -229,12 +231,14 @@ int main(int argv, char* argc[])
             {
                 r.x = x * 10 + 331;
                 r.y = y * 10 + 31;
-                r.w = r.h = 10;
-                SDL_FillRect(src, &r, SDL_MapRGB(src->format, NetOutR[y * 20 + x], NetOutG[y * 20 + x], NetOutB[y * 20 + x]));
+                r.w = r.h = 15;
+                SDL_FillRect(src, &r, SDL_MapRGB(src->format, NetOutR[y * 20 + x] * 255, NetOutG[y * 20 + x] * 255, NetOutB[y * 20 + x] * 255));
             }
         }
+        
         SDL_UpdateWindowSurface(win);
         SDL_Delay(delay);
+        //system("cls");
         counter++;
     }
 	quit();
