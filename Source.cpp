@@ -6,6 +6,8 @@
 #include <cstdio>
 #include <vector>
 #include <iomanip>
+#include <thread>
+#include <ctime>
 SDL_Window* win;
 SDL_Renderer* ren;
 SDL_Surface* src;
@@ -13,8 +15,25 @@ SDL_Surface* image;
 
 SDL_Event e;
 
+std::vector<double> inputR;
+std::vector<double> outputR;
+std::vector<double> NetOutR;
+
+std::vector<double> inputG;
+std::vector<double> outputG;
+std::vector<double> NetOutG;
+
+std::vector<double> inputB;
+std::vector<double> outputB;
+std::vector<double> NetOutB;
 
 std::vector<std::vector<uint8_t>> dataIn;
+
+std::vector<uint16_t> network = { 80,500,500,64 };
+
+NeironNetwork net(network);
+NeironNetwork net2(network);
+NeironNetwork net3(network);
 
 void init()
 {
@@ -44,14 +63,9 @@ void quit()
 	SDL_Quit();
 }
 
-void draw()
-{
-
-}
-
 typedef struct {
     size_t x, y;
-    char R, G, B;
+    uint8_t R, G, B;
 }Pixel;
 
 typedef struct {
@@ -97,7 +111,7 @@ void loadIMG(IMG* img, char* path) {
             char color[4];
             inFile.seekg(pos);
             inFile.read(color, img->bits/8);
-            img->pixel.push_back({ w, h, color[2], color[1], color[0] });
+            img->pixel.push_back({ w, h, (uint8_t)color[2], (uint8_t)color[1], (uint8_t)color[0] });
             pos += img->bits/8;
         }
         printf("\nrow: %i pos %08X", h, pos);
@@ -105,24 +119,36 @@ void loadIMG(IMG* img, char* path) {
     }
 }
 
+void tr1(std::vector<double> input, std::vector<double> output, std::vector<double> &NetOut)
+{
+    //net.NetUpdate(input, output, &NetOut);
+}
+
+void tr2(std::vector<double> input, std::vector<double> output, std::vector<double>& NetOut)
+{
+    //net2.NetUpdate(input, output, &NetOut);
+}
+
+void tr3(std::vector<double> input, std::vector<double> output, std::vector<double>& NetOut)
+{
+    //net3.NetUpdate(input, output, &NetOut);
+}
+
+
 int main(int argv, char* argc[])
 {
 	init();
     IMG img;
-	NeironNetwork net({276,300,300,400});
-    NeironNetwork net2({ 276,300,300,400 });
-    NeironNetwork net3({ 276,300,300,400 });
+	
     loadIMG(&img, (char*)("home.bmp"));
     bool run = true;
     SDL_Rect r;
+    r.w = r.h = 10;
     int delay = 0;
     std::cout << "\n";
+    bool learn = true;
+    
 
-    int a1[20];
-    int* a2 = new int[20];
-    *a2 = 1;
-    std::cout << sizeof(a1) / sizeof(*a1) << std::endl;
-    std::cout << sizeof(a2) << " " << sizeof(*a2);
     
     int counter = 1;
     /*while (1)
@@ -139,9 +165,10 @@ int main(int argv, char* argc[])
         SDL_Delay(1);
         system("cls");
     }*/
-    int Px = 0, Py = 0;
+    int Px = 20, Py = 200;
    while (run)
     {
+        //uint64_t time = clock();
         while (SDL_PollEvent(&e) != 0)
         {
             if (e.type == SDL_QUIT)
@@ -164,9 +191,29 @@ int main(int argv, char* argc[])
                 {
                     system("pause");
                 }
+                if (e.key.keysym.sym == SDLK_w)
+                {
+                    Py--;
+                }
+                if (e.key.keysym.sym == SDLK_s)
+                {
+                    Py++;
+                }
+                if (e.key.keysym.sym == SDLK_a)
+                {
+                    Px--;
+                }
+                if (e.key.keysym.sym == SDLK_d)
+                {
+                    Px++;
+                }
+                if (e.key.keysym.sym == SDLK_e)
+                {
+                    learn = !learn;
+                }
             }
         }
-
+        
         //int rand_w = rand() % (img.W - 12) + 1, rand_h = rand() % (img.H - 12) + 1;
 
         //r.x = 1;
@@ -174,33 +221,33 @@ int main(int argv, char* argc[])
         //r.w = r.h = 500;
         //SDL_FillRect(src, &r, SDL_MapRGB(src->format, 255,0,0));
 
-        if (++Px > img.W - 26) {
+        if (Px > img.W - 26) {
             Px = 0;
-            if (++Py > img.H - 26)
+            if (Py > img.H - 26)
             {
                 Py = 0;
             }
         }
-        int rand_w = 60, rand_h = 200;
+        int rand_w = Px, rand_h = Py;
 
-        std::vector<double> inputR;
-        std::vector<double> outputR;
-        std::vector<double> NetOutR;
+        inputR.clear();
+        outputR.clear();
+        NetOutR.clear();
 
-        std::vector<double> inputG;
-        std::vector<double> outputG;
-        std::vector<double> NetOutG;
+        inputG.clear();
+        outputG.clear();
+        NetOutG.clear();
 
-        std::vector<double> inputB;
-        std::vector<double> outputB;
-        std::vector<double> NetOutB;
+        inputB.clear();
+        outputB.clear();
+        NetOutB.clear();
         
-        for (int y = 0; y < 26; y++)
+        for (int y = 0; y < 12; y++)
         {
-            for (int x = 0; x < 26; x++)
+            for (int x = 0; x < 12; x++)
             {
                 int xx = x+rand_w, yy = y+rand_h;
-                if (y > 2 && y < 23 && x > 2 && x < 23)
+                if (y > 1 && y < 10 && x > 1 && x < 10)
                 {
                     outputR.push_back(img.pixel[yy * img.W + xx].R / 255.0);
                     outputG.push_back(img.pixel[yy * img.W + xx].G / 255.0);
@@ -210,37 +257,66 @@ int main(int argv, char* argc[])
                     inputR.push_back(img.pixel[yy * img.W + xx].R / 255.0);
                     inputG.push_back(img.pixel[yy * img.W + xx].G / 255.0);
                     inputB.push_back(img.pixel[yy * img.W + xx].B / 255.0);
+                    //inputR.push_back(0.001);
+                    //inputG.push_back(0.002);
+                    //inputB.push_back(0.003);
                 }
-                r.x = x * 10 + 1;
-                r.y = y * 10 + 1;
-                r.w = r.h = 10;
-                SDL_FillRect(src, &r, SDL_MapRGB(src->format, img.pixel[yy * img.W + xx].R, img.pixel[yy * img.W + xx].G, img.pixel[yy * img.W + xx].B));
-                r.x = x * 10 + 301;
-                r.y = y * 10 + 1;
-                SDL_FillRect(src, &r, SDL_MapRGB(src->format, img.pixel[yy * img.W + xx].R, img.pixel[yy * img.W + xx].G, img.pixel[yy * img.W + xx].B));
+                if (1) {
+                    r.x = x * 10 + 1;
+                    r.y = y * 10 + 1;
+                    SDL_FillRect(src, &r, SDL_MapRGB(src->format, img.pixel[yy * img.W + xx].R, img.pixel[yy * img.W + xx].G, img.pixel[yy * img.W + xx].B));
+                    r.x = x * 10 + 301;
+                    r.y = y * 10 + 1;
+                    SDL_FillRect(src, &r, SDL_MapRGB(src->format, img.pixel[yy * img.W + xx].R, img.pixel[yy * img.W + xx].G, img.pixel[yy * img.W + xx].B));
+                }
             }
         }
-        net.NetUpdate(inputR, outputR, &NetOutR);
-        net2.NetUpdate(inputG, outputG, &NetOutG);
-        net3.NetUpdate(inputB, outputB, &NetOutB);
+        //std::cout << clock() - time << std::endl;
+        /*std::thread tr11(tr1, inputR, outputR, std::ref(NetOutR));
+        std::thread tr12(tr2, inputG, outputG, std::ref(NetOutG));
+        std::thread tr13(tr3, inputB, outputB, std::ref(NetOutB));
 
-
-        for (int y = 0; y < 20; y++)
-        {
-            for (int x = 0; x < 20; x++)
-            {
-                r.x = x * 10 + 331;
-                r.y = y * 10 + 31;
-                r.w = r.h = 15;
-                SDL_FillRect(src, &r, SDL_MapRGB(src->format, NetOutR[y * 20 + x] * 255, NetOutG[y * 20 + x] * 255, NetOutB[y * 20 + x] * 255));
-            }
-        }
+        tr11.join();
+        tr12.join();
+        tr13.join();*/
+        net.NetUpdate(inputR, outputR, & NetOutR, learn);
+        net.NetUpdate(inputB, outputG, & NetOutG, learn);
+        net.NetUpdate(inputG, outputB, & NetOutB, learn);
+        //std::cout << clock() - time << std::endl;
         
+        int cor = 8;
+        if (1) {
+            for (int y = 0; y < cor; y++)
+            {
+                for (int x = 0; x < cor; x++)
+                {
+                    r.x = x * 10 + 321;
+                    r.y = y * 10 + 21;
+                    //SDL_FillRect(src, &r, SDL_MapRGB(src->format, ((NetOutR[y * cor + x] * 255) > 255 ? 255: (NetOutR[y * cor + x] * 255)),
+                    //    ((NetOutG[y * cor + x] * 255) > 255 ? 255 : (NetOutG[y * cor + x] * 255)),
+                    //    ((NetOutB[y * cor + x] * 255) > 255 ? 255 : (NetOutB[y * cor + x] * 255))));
+                    SDL_FillRect(src, &r, SDL_MapRGB(src->format, NetOutR[y * cor + x] * 255, NetOutG[y * cor + x] * 255, NetOutB[y * cor + x] * 255));
+                }
+            }
+        }
+        r.x = 1;
+        r.y = 300;
+        SDL_FillRect(src, &r, SDL_MapRGB(src->format, counter % 2 == 0 ? 255:0 , 0, 0));
+        
+        if (counter % 50 == 0)
+        {
+            Px = rand() % (img.W - 20);
+            Py = rand() % (img.H - 20);
+        }
+
+        //std::cout << clock() - time << std::endl;
         SDL_UpdateWindowSurface(win);
         SDL_Delay(delay);
         //system("cls");
         counter++;
+        //std::cout << clock() - time << std::endl;
     }
 	quit();
 	return 0;
 }
+
